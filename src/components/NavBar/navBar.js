@@ -29,7 +29,7 @@ const Navbar = () => {
             <div className="navbar-center">
                 <Link to="/prueba" smooth={true} duration={500}>Pruebas</Link>
                 <ScrollLink to="historia" smooth={true} duration={500}>Historia de vida</ScrollLink>
-                <ScrollLink to="album" smooth={true} duration={500}>Tu álbum</ScrollLink>
+                <Link to="/album" smooth={true} duration={500}>Tu álbum</Link>
                 <ScrollLink to="ordena" smooth={true} duration={500}>Ordena tu vida</ScrollLink>
             </div>
 

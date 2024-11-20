@@ -1,7 +1,10 @@
 /* src/album/CreateAlbum.css */
 
 .create-album-container {
+    z-index: 10;
     padding: 16px;
+    position: relative;
+    margin-left: 70%;
 }
 
 .create-album-container h2 {

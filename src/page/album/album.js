@@ -6,9 +6,9 @@ import { useAuth } from '../auth/authContext';
 import EntriesManager from '../entry/entry'; // Asegúrate de importar correctamente
 import useEntries from '../entry/useEntries';
 import SideMenu from './sideMenu';
-import CreateAlbum from './createAlbum';
-import ListAlbums from './listAlbums';
-import SelectedAlbum from './selectedAlbum';
+import CreateAlbum from './crudAlbum/createAlbum';
+import ListAlbums from './crudAlbum/listAlbums';
+import SelectedAlbum from './crudAlbum/selectedAlbum';
 import {
     DndContext,
     useDroppable,
@@ -91,26 +91,28 @@ const Album = () => {
 
     const handleEntryClick = (entry) => {
         if (!selectedAlbum) return;
+
+        // Verificar si la entrada ya está seleccionada
         const isSelected = localAlbumEntries.some(albumEntry => albumEntry.id === entry.id);
 
         if (isSelected) {
-            const updatedAlbumEntries = localAlbumEntries.filter(albumEntry => albumEntry.id !== entry.id);
-            setLocalAlbumEntries(updatedAlbumEntries);
-            handleUpdateAlbumEntries(selectedAlbum.id, updatedAlbumEntries);
+            // Si la entrada ya está seleccionada, la eliminamos del estado local
+            setLocalAlbumEntries(prevEntries =>
+                prevEntries.filter(albumEntry => albumEntry.id !== entry.id)
+            );
         } else {
+            // Si no está seleccionada, la añadimos al estado local
             if (localAlbumEntries.length >= 15) {
                 alert("No puedes agregar más de 15 entradas a un álbum.");
                 return;
             }
-            const newEntry = {
-                ...entry,
-                position: { x: 0, y: 0 }, // Posición inicial
-            };
-            const updatedAlbumEntries = [...localAlbumEntries, newEntry];
-            setLocalAlbumEntries(updatedAlbumEntries);
-            handleUpdateAlbumEntries(selectedAlbum.id, updatedAlbumEntries);
+            setLocalAlbumEntries(prevEntries => [
+                ...prevEntries,
+                { ...entry, position: { x: 0, y: 0 } }
+            ]);
         }
     };
+
 
     const handleBackgroundChange = async (e) => {
         if (!selectedAlbum) return;
@@ -180,26 +182,41 @@ const Album = () => {
         const { active, delta } = event;
         const entryId = active.id;
 
-        console.log(`Moviendo entrada ${entryId} por delta:`, delta);
-
+        // Actualizamos solo la entrada movida
         setLocalAlbumEntries((entries) => {
             const updatedEntries = entries.map(entry => {
                 if (entry.id === entryId) {
+                    // Actualizamos solo la posición de la entrada movida
                     const newX = entry.position.x + delta.x;
                     const newY = entry.position.y + delta.y;
-                    console.log(`Nueva posición para ${entryId}: x=${newX}, y=${newY}`);
                     return {
                         ...entry,
                         position: { x: newX, y: newY },
                     };
                 }
-                return entry;
+                return entry; // No modificamos las demás entradas
             });
-            // Actualizamos el backend con las nuevas posiciones
-            handleUpdateAlbumEntries(selectedAlbum.id, updatedEntries);
+
+            // Actualizamos el estado local sin sobrescribir las entradas seleccionadas
             return updatedEntries;
         });
     };
+
+    const handleSaveAlbumChanges = async () => {
+        if (!selectedAlbum) return;
+
+        try {
+            // Enviar las entradas actualizadas al backend
+            await handleUpdateAlbumEntries(selectedAlbum.id, localAlbumEntries);
+            console.log("Cambios del álbum guardados correctamente");
+            alert("Cambios guardados con éxito.");
+        } catch (error) {
+            console.error("Error al guardar los cambios del álbum:", error);
+            alert("Ocurrió un error al guardar los cambios.");
+        }
+    };
+
+
 
     // Función para eliminar una entrada
     const handleDeleteEntry = async (entryId) => {
@@ -245,8 +262,8 @@ const Album = () => {
             transform: CSS.Translate.toString(transform),
             transition,
             position: 'absolute',
-            top: 0,
-            left: 0,
+            top: entry.position.y,
+            left: entry.position.x,
             cursor: 'grab',
             opacity: isDragging ? 0.5 : 1,
         };
@@ -254,10 +271,10 @@ const Album = () => {
         return (
             <div
                 ref={setNodeRef}
-                style={{ ...style, ...entry.position }}
+                style={style}
                 {...attributes}
                 {...listeners}
-                className="draggable-entry"
+                className={`draggable-entry ${isDragging ? 'dragging' : ''}`}
             >
                 <div className="entry-content">
                     <p>{entry.texto || 'Entrada sin texto'}</p>
@@ -292,54 +309,62 @@ const Album = () => {
                     {renderContent()}
                 </div>
             )}
-
-            {/* Contenido Principal */}
-            <div className="main-content">
-                {selectedAlbum ? (
-                    <>
-                        <div className="album-manager">
-                            <div className="album-header">
-                                <h2>{selectedAlbum.name}</h2>
-                                <div className="album-actions">
-                                    <label htmlFor="bg-color">Color de Fondo:</label>
-                                    <input
-                                        type="color"
-                                        id="bg-color"
-                                        value={albumBackground}
-                                        onChange={handleBackgroundChange}
-                                        className="color-picker"
-                                    />
+            <div>
+                <div className="entries-section">
+                    <EntriesManager
+                        entries={entries}
+                        albumEntries={localAlbumEntries}
+                        onEntryClick={handleEntryClick}
+                    />
+                </div>
+                {/* Contenido Principal */}
+                <div className="main-content">
+                    {selectedAlbum ? (
+                        <>
+                            <div className="album-manager">
+                                <div className="album-header">
+                                    <h2>{selectedAlbum.name}</h2>
+                                    <div className="album-actions">
+                                        <label htmlFor="bg-color">Color de Fondo:</label>
+                                        <input
+                                            type="color"
+                                            id="bg-color"
+                                            value={albumBackground}
+                                            onChange={handleBackgroundChange}
+                                            className="color-picker"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <p className="entry-count">{localAlbumEntries.length}/15</p>
+                                <p className="entry-count">{localAlbumEntries.length}/15</p>
 
-                            {/* Implementación de @dnd-kit para diseño libre */}
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}
-                            >
-                                <DroppableContainer>
-                                    {localAlbumEntries.map((entry) => (
-                                        <DraggableEntry key={entry.id} entry={entry} />
-                                    ))}
-                                </DroppableContainer>
-                            </DndContext>
-                        </div>
-                        <div className="entries-section">
-                            <EntriesManager
-                                entries={entries}
-                                albumEntries={localAlbumEntries}
-                                onEntryClick={handleEntryClick}
-                            />
-                        </div>
-                    </>
-                ) : (
-                    <p className="select-album-message">Selecciona un álbum para comenzar.</p>
-                )}
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    onDragEnd={handleDragEnd}
+                                >
+                                    <DroppableContainer>
+                                        {localAlbumEntries.map((entry) => (
+                                            <DraggableEntry key={entry.id} entry={entry} />
+                                        ))}
+                                    </DroppableContainer>
+                                </DndContext>
+                            </div>
+
+                        </>
+                    ) : (
+                        <p className="select-album-message">Selecciona un álbum para comenzar.</p>
+                    )}
+                </div>
+                <button
+                    className="save-album-btn"
+                    onClick={handleSaveAlbumChanges}
+                >
+                    Guardar Cambios
+                </button>
             </div>
         </div>
     );
+
 };
 
 export default Album;

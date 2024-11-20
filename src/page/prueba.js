@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../page/auth/authContext'; // Hook para obtener el usuario autenticado
 import useEntries from './entry/useEntries';
-import EntriesManager from './entry/entry';
+import SideMenu from './album/sideMenu';
 import './Prueba.css';
 
 const Prueba = () => {
@@ -15,11 +15,7 @@ const Prueba = () => {
     return (
         <div className="testing-page">
             <h1>Ambiente de Pruebas</h1>
-            <EntriesManager
-                entries={entries}
-                albumEntries={[]} // Puedes dejar esto vacío ya que no lo estás usando
-                onEntryClick={(entry) => console.log('Entrada seleccionada:', entry)}
-            />
+            <SideMenu />
         </div>
     );
 };

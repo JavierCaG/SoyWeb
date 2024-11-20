@@ -1,5 +1,3 @@
-// src/entry/EntriesManager.jsx
-
 import React from 'react';
 import './Entry.css'; // Crear estilos para grid
 import SongEntry from './entryMapper/songEntry';
@@ -7,8 +5,6 @@ import MediaEntry from './entryMapper/mediaEntry';
 import TextAudioEntry from './entryMapper/textEntry';
 
 const EntriesManager = ({ entries, albumEntries, onEntryClick }) => {
-
-    // Función para determinar el tipo de entrada
     const getEntryType = (entry) => {
         if (entry.cancion) {
             return 'song';
@@ -23,7 +19,6 @@ const EntriesManager = ({ entries, albumEntries, onEntryClick }) => {
 
     return (
         <div className="entries-manager">
-            {/* Contenedor de Entradas Disponibles (Selección) */}
             <div className="entries-selector">
                 <h3>Entradas Disponibles</h3>
                 <div className="entries-grid">
@@ -45,7 +40,6 @@ const EntriesManager = ({ entries, albumEntries, onEntryClick }) => {
                                     EntryComponent = TextAudioEntry;
                                     break;
                                 default:
-                                    // Puedes manejar entradas desconocidas de alguna manera
                                     return null;
                             }
 
@@ -59,9 +53,8 @@ const EntriesManager = ({ entries, albumEntries, onEntryClick }) => {
                                 >
                                     <EntryComponent
                                         entry={entry}
-                                        onClick={onEntryClick}
+                                        onClick={() => onEntryClick(entry)} // Pasar onEntryClick al componente
                                     />
-                                    {/* Indicador de selección */}
                                     {isSelected && (
                                         <div className="selected-overlay">
                                             ✓

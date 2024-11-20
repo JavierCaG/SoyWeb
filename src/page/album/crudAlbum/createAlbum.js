@@ -1,7 +1,7 @@
 // src/album/CreateAlbum.jsx
 
 import React, { useState, useEffect } from 'react';
-import { getBeneficiarios } from '../../firebase';
+import { getBeneficiarios } from '../../../firebase';
 import './CreateAlbum.css';
 
 const CreateAlbum = ({ onCreate }) => {

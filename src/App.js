@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/NavBar/navBar';
 import Home from './page/home/home'
 import Prueba from './page/prueba';
+import AlbumPage from './page/album/pageAlbum';
 import LoginPage from './page/auth/login';
 import RegisterPage from './page/auth/register';
 import ProtectedRoute from './components/protectedRoute';
@@ -42,6 +43,16 @@ function App() {
               <ProtectedRoute>
                 <ProtectedLayout>
                   <Prueba />
+                </ProtectedLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/album"
+            element={
+              <ProtectedRoute>
+                <ProtectedLayout>
+                  <AlbumPage />
                 </ProtectedLayout>
               </ProtectedRoute>
             }
