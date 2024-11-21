@@ -13,7 +13,16 @@
     font-family: Arial, sans-serif;
     z-index: 1000;
     box-sizing: border-box;
+    transition: transform 0.3s ease-in-out;
+    /* Añadido para animación */
 }
+
+.navbar--hidden {
+    transform: translateY(-100%);
+    /* Oculta el navbar desplazándolo hacia arriba */
+}
+
+/* Resto de tus estilos existentes... */
 
 .navbar-brand {
     font-size: 2rem;
@@ -21,7 +30,6 @@
     font-weight: bold;
     text-decoration: none;
     margin-right: 20px;
-    /* Espacio entre el logo y los enlaces */
 }
 
 .navbar-center {
@@ -29,7 +37,6 @@
     gap: 20px;
     justify-content: center;
     flex-grow: 1;
-    /* Hace que el contenedor central ocupe el espacio disponible */
 }
 
 .navbar-center a {
@@ -61,6 +68,7 @@
     text-decoration: underline;
 }
 
+/* Estilos responsivos */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;

@@ -177,6 +177,13 @@ const Album = () => {
                 return null;
         }
     };
+    const toggleMenu = () => {
+        setIsMenuExpanded(!isMenuExpanded);
+        if (isMenuExpanded) {
+            // Si estamos colapsando el menú, deseleccionamos la opción activa
+            setActiveOption(null);
+        }
+    };
 
     const handleDragEnd = (event) => {
         const { active, delta } = event;
@@ -262,6 +269,7 @@ const Album = () => {
             transform: CSS.Translate.toString(transform),
             transition,
             position: 'absolute',
+            border: 1,
             top: entry.position.y,
             left: entry.position.x,
             cursor: 'grab',
@@ -277,17 +285,8 @@ const Album = () => {
                 className={`draggable-entry ${isDragging ? 'dragging' : ''}`}
             >
                 <div className="entry-content">
+                    <image>{entry.media}</image>
                     <p>{entry.texto || 'Entrada sin texto'}</p>
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteEntry(entry.id);
-                        }}
-                        className="delete-button"
-                        aria-label="Eliminar entrada"
-                    >
-                        &times;
-                    </button>
                 </div>
             </div>
         );
@@ -298,11 +297,10 @@ const Album = () => {
             {/* Menú Lateral Izquierdo */}
             <SideMenu
                 isExpanded={isMenuExpanded}
-                toggleMenu={() => setIsMenuExpanded(!isMenuExpanded)}
+                toggleMenu={toggleMenu}
                 activeOption={activeOption}
                 handleOptionClick={handleOptionClick}
             />
-
             {/* Contenedor de Opciones Activas */}
             {activeOption && (
                 <div className={`options-container ${isMenuExpanded ? 'expanded' : 'collapsed'}`}>

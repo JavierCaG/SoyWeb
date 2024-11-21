@@ -2,33 +2,39 @@
 
 /* Menú Lateral */
 .side-menu {
-    width: 250px;
+    position: fixed;
+    top: 4%;
+    /* Alinea con el top de la página */
+    left: 0;
+    width: 200px;
+    /* Ancho cuando está expandido */
+    height: 100%;
+    /* Altura completa */
     background-color: #2c3e50;
     color: #ecf0f1;
+    z-index: 10;
+    /* Mayor que el contenedor de opciones */
+    transition: width 0.3s ease;
     display: flex;
     flex-direction: column;
     padding: 16px;
-    transition: all 0.3s ease;
-    height: 100%;
-    position: fixed;
-    overflow-y: hidden;
-    z-index: 10;
 }
 
 .side-menu.collapsed {
     width: 60px;
     height: 2rem;
-    border-radius: 90px;
-    align-items: center;
+    border-radius: 60;
+    /* Ancho cuando está colapsado */
 }
 
 .toggle-menu-button {
+    top: 0;
+    left: 0;
     background: none;
     border: none;
     color: #ecf0f1;
     font-size: 24px;
     cursor: pointer;
-    margin-bottom: 10;
     text-align: left;
 }
 
@@ -41,19 +47,18 @@
 .menu-option {
     background-color: transparent;
     border: none;
-    margin-left: 10%;
     color: #ecf0f1;
     padding: 12px;
     font-size: 16px;
     cursor: pointer;
     text-align: left;
-    transition: background-color 0.2s;
 }
 
-.menu-option:hover,
-.menu-option.active {
-    background-color: #34495e;
+.menu-option:focus {
+    outline: none;
+    color: inherit; /* Mantiene el color definido */
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {
