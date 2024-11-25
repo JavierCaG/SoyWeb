@@ -1,5 +1,3 @@
-// src/components/Navbar.js
-
 import React, { useState, useEffect } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,10 +22,8 @@ const Navbar = () => {
     const controlNavbar = () => {
         if (typeof window !== 'undefined') {
             if (window.scrollY > lastScrollY && window.scrollY > 50) {
-                // Si el desplazamiento actual es mayor que el anterior y ha pasado 50px, ocultamos el navbar
                 setShowNavbar(false);
             } else {
-                // Si el usuario se desplaza hacia arriba, mostramos el navbar
                 setShowNavbar(true);
             }
             setLastScrollY(window.scrollY);
@@ -37,8 +33,6 @@ const Navbar = () => {
     useEffect(() => {
         if (typeof window !== 'undefined') {
             window.addEventListener('scroll', controlNavbar);
-
-            // Cleanup del event listener
             return () => {
                 window.removeEventListener('scroll', controlNavbar);
             };
@@ -47,25 +41,19 @@ const Navbar = () => {
 
     return (
         <nav className={`navbar ${showNavbar ? '' : 'navbar--hidden'}`}>
-            {/* Logo a la izquierda */}
-            <Link to="/" smooth={true} duration={500} className="navbar-brand">
-                Soy
-            </Link>
-
-            {/* Enlaces centrales */}
-            <div className="navbar-center">
-                <Link to="/prueba" smooth={true} duration={500}>Pruebas</Link>
-                <ScrollLink to="historia" smooth={true} duration={500}>Historia de vida</ScrollLink>
-                <Link to="/album" smooth={true} duration={500}>Tu álbum</Link>
-                <ScrollLink to="ordena" smooth={true} duration={500}>Ordena tu vida</ScrollLink>
-            </div>
-
-            {/* Acciones a la derecha */}
-            <div className="navbar-actions">
-                <ScrollLink to="perfil" smooth={true} duration={500}>Perfil</ScrollLink>
-                <button onClick={handleLogout} className="logout-button">
-                    Cerrar sesión
-                </button>
+            <div className="navbar-content">
+                <Link to="/" className="navbar-brand">
+                    Soy
+                </Link>
+                <div className="navbar-links">
+                    <Link to="/prueba">Pruebas</Link>
+                    <ScrollLink to="historia" smooth={true} duration={500}>Historia de vida</ScrollLink>
+                    <Link to="/album">Tu álbum</Link>
+                    <Link to="/organize">Ordena tu vida</Link>
+                </div>
+                <div className="navbar-actions">
+                    <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
+                </div>
             </div>
         </nav>
     );
